@@ -1,0 +1,583 @@
+```html
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f7eee9">
+
+    <title>Descubra sua essência | Scond Collection</title>
+
+    <style>
+        /* ========================================
+           CONFIGURAÇÕES GERAIS
+        ======================================== */
+
+        :root {
+            font-family: Arial, Helvetica, sans-serif;
+            color: #382b30;
+            background: #f7eee9;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 22px;
+        }
+
+        /* ========================================
+           CONTAINER PRINCIPAL
+        ======================================== */
+
+        .wrap {
+            width: min(100%, 510px);
+            background: #fffdfb;
+            border: 1px solid #e8d9d8;
+            border-radius: 24px;
+            padding: 30px 24px;
+            box-shadow: 0 16px 50px #54313d12;
+        }
+
+        .brand {
+            text-align: center;
+            letter-spacing: 3px;
+            font-size: 12px;
+            font-weight: 800;
+            color: #a66e81;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #856b75;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .headline {
+            text-align: center;
+            font-family: Georgia, serif;
+            font-size: 33px;
+            line-height: 1.1;
+            margin: 18px 0 12px;
+        }
+
+        /* ========================================
+           BARRA DE PROGRESSO
+        ======================================== */
+
+        .progress {
+            height: 6px;
+            background: #f0e6e5;
+            border-radius: 20px;
+            overflow: hidden;
+            margin: 24px 0;
+        }
+
+        .bar {
+            height: 100%;
+            background: #b98494;
+            width: 0;
+            transition: width 0.2s;
+        }
+
+        /* ========================================
+           PERGUNTAS E ALTERNATIVAS
+        ======================================== */
+
+        .kicker {
+            font-size: 12px;
+            letter-spacing: 1.2px;
+            color: #a47786;
+            font-weight: bold;
+        }
+
+        .question {
+            font-family: Georgia, serif;
+            font-size: 25px;
+            line-height: 1.2;
+            margin: 12px 0 20px;
+        }
+
+        .choices {
+            display: grid;
+            gap: 10px;
+        }
+
+        .choice {
+            border: 1px solid #e4d2d4;
+            background: #fff;
+            border-radius: 13px;
+            text-align: left;
+            padding: 17px 15px;
+            color: #382b30;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .choice:hover,
+        .choice:focus {
+            border-color: #b98494;
+            background: #fbf4f5;
+            outline: 2px solid transparent;
+        }
+
+        .back,
+        .restart {
+            border: 0;
+            background: none;
+            color: #906675;
+            cursor: pointer;
+            padding: 16px 4px;
+            font-size: 14px;
+        }
+
+        /* ========================================
+           RESULTADOS
+        ======================================== */
+
+        .result {
+            border: 1px solid #e7d5d9;
+            padding: 18px;
+            border-radius: 16px;
+            margin: 12px 0;
+        }
+
+        .result small {
+            color: #9a6b7a;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+
+        .result h3 {
+            font-family: Georgia, serif;
+            font-size: 23px;
+            margin: 8px 0;
+        }
+
+        .result p {
+            line-height: 1.5;
+            color: #705d65;
+        }
+
+        .cta {
+            display: block;
+            text-align: center;
+            background: #a76c80;
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            padding: 14px;
+            font-weight: bold;
+        }
+
+        /* ========================================
+           RODAPÉ E RESPONSIVIDADE
+        ======================================== */
+
+        .fine {
+            text-align: center;
+            color: #927f86;
+            font-size: 12px;
+            margin-top: 20px;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 380px) {
+            .wrap {
+                padding: 23px 17px;
+            }
+
+            .headline {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="wrap">
+
+        <div class="brand">SCOND COLLECTION</div>
+
+        <h1 class="headline">Descubra sua essência</h1>
+
+        <p class="subtitle">
+            Responda 5 perguntas e encontre os perfumes que
+            mais combinam com você.
+        </p>
+
+        <div class="progress">
+            <div id="bar" class="bar"></div>
+        </div>
+
+        <section id="quiz" aria-live="polite"></section>
+
+        <p class="fine">
+            Indicações baseadas em perfis olfativos aproximados.
+            A percepção de cada fragrância é pessoal.
+        </p>
+
+    </main>
+
+    <script>
+        /* ========================================
+           CATÁLOGO DE PERFUMES
+        ======================================== */
+
+        const products = [
+            {
+                name: "412 VIP Woman",
+                gender: "f",
+                profiles: ["sweet", "bold"],
+                occasions: ["night", "date"],
+                intensity: 3,
+                description: "Doce, envolvente e com clima de festa."
+            },
+            {
+                name: "Amber Monarch",
+                gender: "f",
+                profiles: ["woody", "bold", "sweet"],
+                occasions: ["night", "versatile"],
+                intensity: 3,
+                description: "Frutado, ambarado e sofisticado."
+            },
+            {
+                name: "Aquatic Blue",
+                gender: "f",
+                profiles: ["fresh"],
+                occasions: ["day", "versatile"],
+                intensity: 2,
+                description: "Fresco, aquático e aromático."
+            },
+            {
+                name: "Royal Amber",
+                gender: "f",
+                profiles: ["woody", "sweet", "bold"],
+                occasions: ["night", "date"],
+                intensity: 3,
+                description: "Ambarado e acolhedor, de presença marcante."
+            },
+            {
+                name: "Blue Girl",
+                gender: "f",
+                profiles: ["fresh"],
+                occasions: ["day", "versatile"],
+                intensity: 1,
+                description: "Leve, cítrico e refrescante."
+            },
+            {
+                name: "Celina Woman",
+                gender: "f",
+                profiles: ["floral", "bold"],
+                occasions: ["date", "night"],
+                intensity: 2,
+                description: "Floral elegante e expressivo."
+            },
+            {
+                name: "Coco Paris",
+                gender: "f",
+                profiles: ["floral", "bold"],
+                occasions: ["versatile", "day"],
+                intensity: 2,
+                description: "Clássico, refinado e sofisticado."
+            },
+            {
+                name: "Divine",
+                gender: "f",
+                profiles: ["sweet", "bold"],
+                occasions: ["night", "date"],
+                intensity: 3,
+                description: "Frutado exuberante e marcante."
+            },
+            {
+                name: "Glamour",
+                gender: "f",
+                profiles: ["sweet", "bold"],
+                occasions: ["night", "date"],
+                intensity: 3,
+                description: "Frutado moderno e sedutor."
+            },
+            {
+                name: "Khloé",
+                gender: "f",
+                profiles: ["floral", "fresh"],
+                occasions: ["day", "versatile"],
+                intensity: 1,
+                description: "Floral delicado com sensação de limpeza."
+            },
+            {
+                name: "La Yali",
+                gender: "f",
+                profiles: ["floral", "sweet"],
+                occasions: ["date", "versatile"],
+                intensity: 2,
+                description: "Floral envolvente e feminino."
+            },
+            {
+                name: "011 Man Black",
+                gender: "m",
+                profiles: ["spicy", "bold"],
+                occasions: ["night", "date"],
+                intensity: 3,
+                description: "Intenso, especiado e noturno."
+            },
+            {
+                name: "F40 Man Black",
+                gender: "m",
+                profiles: ["woody", "sweet"],
+                occasions: ["versatile", "date"],
+                intensity: 2,
+                description: "Amadeirado casual e aconchegante."
+            },
+            {
+                name: "H12 Man VIP",
+                gender: "m",
+                profiles: ["fresh", "spicy"],
+                occasions: ["versatile", "night"],
+                intensity: 2,
+                description: "Aromático e vibrante."
+            },
+            {
+                name: "Spirit Selvagem",
+                gender: "m",
+                profiles: ["fresh", "spicy", "bold"],
+                occasions: ["versatile", "night"],
+                intensity: 3,
+                description: "Aromático, especiado e de presença forte."
+            },
+            {
+                name: "Zahara",
+                gender: "f",
+                profiles: ["sweet", "floral"],
+                occasions: ["date", "day"],
+                intensity: 2,
+                description: "Doce, cremoso e delicado."
+            }
+        ];
+
+        /* ========================================
+           PERGUNTAS DO QUIZ
+        ======================================== */
+
+        const questions = [
+            {
+                title: "Qual tipo de perfume você procura?",
+                options: [
+                    ["Feminino", "f"],
+                    ["Masculino", "m"]
+                ]
+            },
+            {
+                title: "Qual cheiro mais te conquista?",
+                options: [
+                    ["Fresco e cheirinho de banho", "fresh"],
+                    ["Doce e envolvente", "sweet"],
+                    ["Floral e delicado", "floral"],
+                    ["Intenso e sofisticado", "bold"],
+                    ["Amadeirado e aconchegante", "woody"],
+                    ["Aromático e especiado", "spicy"]
+                ]
+            },
+            {
+                title: "Em qual ocasião você mais usaria?",
+                options: [
+                    ["Dia a dia e trabalho", "day"],
+                    ["Encontros e passeios", "date"],
+                    ["Festas e eventos", "night"],
+                    ["Em qualquer ocasião", "versatile"]
+                ]
+            },
+            {
+                title: "Quanto você quer que seu perfume se destaque?",
+                options: [
+                    ["Discreto", 1],
+                    ["Equilibrado", 2],
+                    ["Bem marcante", 3]
+                ]
+            },
+            {
+                title: "Qual estilo mais combina com você?",
+                options: [
+                    ["Leve e natural", "fresh"],
+                    ["Romântico e delicado", "floral"],
+                    ["Charmoso e envolvente", "sweet"],
+                    ["Poderoso e elegante", "bold"],
+                    ["Aconchegante e clássico", "woody"],
+                    ["Moderno e vibrante", "spicy"]
+                ]
+            }
+        ];
+
+        /* ========================================
+           ESTADO DO QUIZ
+        ======================================== */
+
+        let step = 0;
+        let answers = [];
+
+        const root = document.getElementById("quiz");
+        const bar = document.getElementById("bar");
+
+        /* ========================================
+           FUNÇÃO AUXILIAR PARA CRIAR ELEMENTOS
+        ======================================== */
+
+        function el(tag, cls, text) {
+            const element = document.createElement(tag);
+
+            if (cls) {
+                element.className = cls;
+            }
+
+            if (text !== undefined) {
+                element.textContent = text;
+            }
+
+            return element;
+        }
+
+        /* ========================================
+           EXIBIÇÃO DAS PERGUNTAS E RESULTADOS
+        ======================================== */
+
+        function render() {
+            root.replaceChildren();
+
+            bar.style.width = (Math.min(step, 5) / 5 * 100) + "%";
+
+            // Exibe as perguntas enquanto houver etapas.
+            if (step < questions.length) {
+                const question = questions[step];
+
+                root.append(
+                    el("div", "kicker", `PERGUNTA ${step + 1} DE 5`),
+                    el("h2", "question", question.title)
+                );
+
+                const list = el("div", "choices");
+
+                question.options.forEach(([label, value]) => {
+                    const button = el("button", "choice", label);
+
+                    button.type = "button";
+                    button.append(el("span", "", "→"));
+
+                    button.onclick = () => {
+                        answers[step] = value;
+                        step++;
+                        render();
+                    };
+
+                    list.append(button);
+                });
+
+                root.append(list);
+
+                // Permite retornar à pergunta anterior.
+                if (step > 0) {
+                    const back = el("button", "back", "← Voltar");
+
+                    back.onclick = () => {
+                        step--;
+                        render();
+                    };
+
+                    root.append(back);
+                }
+
+            } else {
+                // Exibe o título da tela de resultados.
+                root.append(
+                    el("div", "kicker", "SUAS 3 COMBINAÇÕES"),
+                    el("h2", "question", "Encontramos sua essência!")
+                );
+
+                // Filtra os perfumes pelo gênero e calcula a pontuação.
+                const ranked = products
+                    .filter(product => product.gender === answers[0])
+                    .map(product => ({
+                        ...product,
+
+                        score:
+                            (product.profiles.includes(answers[1]) ? 7 : 0) +
+                            (product.occasions.includes(answers[2]) ? 4 : 0) +
+                            (3 - Math.abs(product.intensity - answers[3]) * 2) +
+                            (product.profiles.includes(answers[4]) ? 4 : 0)
+                    }))
+                    .sort((a, b) => b.score - a.score)
+                    .slice(0, 3);
+
+                // Cria um cartão para cada perfume recomendado.
+                ranked.forEach((product, index) => {
+                    const card = el("article", "result");
+
+                    card.append(
+                        el(
+                            "small",
+                            "",
+                            index === 0
+                                ? "SUA MELHOR COMBINAÇÃO"
+                                : `SUGESTÃO ${index + 1}`
+                        ),
+                        el("h3", "", product.name),
+                        el("p", "", product.description)
+                    );
+
+                    const link = el(
+                        "a",
+                        "cta",
+                        "Quero saber mais sobre esse perfume ↗"
+                    );
+
+                    const numeroWhatsApp = "556293265596";
+
+const mensagem =
+    `Olá! Fiz o quiz da Scond Collection e gostei do perfume ${product.name}. Quero saber como comprar!`;
+
+link.href =
+    "https://api.whatsapp.com/send?phone=" +
+    numeroWhatsApp +
+    "&text=" +
+    encodeURIComponent(mensagem);
+
+                    link.target = "_blank";
+                    link.rel = "noopener noreferrer";
+
+                    card.append(link);
+                    root.append(card);
+                });
+
+                // Permite reiniciar o quiz.
+                const restart = el("button", "restart", "↻ Refazer o quiz");
+
+                restart.onclick = () => {
+                    step = 0;
+                    answers = [];
+                    render();
+                };
+
+                root.append(restart);
+            }
+        }
+
+        /* ========================================
+           INICIALIZAÇÃO
+        ======================================== */
+
+        render();
+    </script>
+
+</body>
+</html>
+```
